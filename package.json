@@ -1,0 +1,19 @@
+{
+  "name": "biko",
+  "private": true,
+  "scripts": {
+    "start": "cross-env NODE_ENV=development electron app/",
+    "dev": "poi"
+  },
+  "main": "index.js",
+  "author": {
+    "name": "Weilin Shi",
+    "email": "934587911@qq.com"
+  },
+  "dependencies": {
+    "cross-env": "^5.0.1",
+    "electron": "^1.6.11",
+    "electron-devtools-installer": "^2.2.0",
+    "poi": "^9.1.0"
+  }
+}
