@@ -1,8 +1,3 @@
-import Vue from 'vue';
+import {app} from './src';
 
-new Vue({
-  el: '#app',
-  render() {
-    return (<h1>Hello Vue.</h1>);
-  }
-});
+app.$mount('#app');

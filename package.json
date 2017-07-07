@@ -10,10 +10,15 @@
     "name": "Weilin Shi",
     "email": "934587911@qq.com"
   },
-  "dependencies": {
+  "dependencies": {},
+  "devDependencies": {
+    "bootstrap": "beta",
     "cross-env": "^5.0.1",
     "electron": "^1.6.11",
     "electron-devtools-installer": "^2.2.0",
-    "poi": "^9.1.0"
+    "poi": "^9.1.0",
+    "vue-router": "^2.7.0",
+    "vuex": "^2.3.1",
+    "vuex-router-sync": "^4.2.0"
   }
 }

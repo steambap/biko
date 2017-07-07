@@ -13,7 +13,7 @@ const isDev = process.env.NODE_ENV === 'development'
 
 function createWindow() {
   // Create the browser window.
-  mainWindow = new BrowserWindow({width: 800, height: 600})
+  mainWindow = new BrowserWindow({width: 1366, height: 768})
 
   // and load the index.html of the app.
   const url = isDev ? `http://localhost:4000` : `file://${__dirname}/dist/index.html`
