@@ -11,3 +11,22 @@ body {
 #app {
 	height: 100%;
 }
+
+.no-gutters {
+  margin-right: 0;
+  margin-left: 0;
+
+  > .col,
+  > [class*="col-"] {
+    padding-right: 0;
+    padding-left: 0;
+  }
+}
+
+.border-top {
+	border-top: 1px solid #ccc;
+}
+
+.border-right {
+	border-right: 1px solid #ccc;
+}
