@@ -1,5 +1,6 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
+import {check} from './checker';
 
 const isDev = process.env.NODE_ENV === 'development';
 
@@ -25,20 +26,19 @@ const mutations = {
 
 const actions = {
   checkLink({dispatch, commit}) {
-    return dispatch('check').then(() => {
+    return dispatch('runCheck').then(() => {
       commit('updateResultMsg', 'Done');
     }).catch(err => {
       commit('updateResultMsg', err.toString());
     });
   },
-  async check({state, commit}) {
-    // do {
-
-    // } while (!state.stopFlag);
+  async runCheck({state, commit}) {
+    const checker = check(state.link);
+    do {
+      await checker.nextURL();
+    } while (!state.stopFlag && checker.hasTodos());
   }
 };
-
-
 
 const store = new Vuex.Store({
   strict: process.env.NODE_ENV === 'development',

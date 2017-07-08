@@ -1,137 +1,176 @@
-const assert = require('assert');
 const {URL} = require('url');
-const co = require('co');
 const axios = require('axios');
 const cheerio = require('cheerio');
 
-const urlErrors = {};
-const urlParents = {};
-
-const stats = {
-	todo: 1,
-	link: 0,
-	problem: 0
-};
-
-const startURL = process.argv[2];
-assert(startURL);
-const startURLObj = new URL(startURL);
-const queuedURL = [startURLObj.toString()];
-const checked = new Set();
-
-async function checkLinks() {
-	do {
-		const curURL = queuedURL.shift();
-		await handleURL(curURL);
-		// checkPoint();
-	} while (queuedURL.length > 0);
-
-	printResult();
-}
-
-async function handleURL(urlstr) {
-	const [urlraw, urlParent] = urlstr.split('|');
-	const myURL = new URL(urlraw);
-	if (myURL.hash) {
-		myURL.hash = '';
+class Checker {
+	/**
+	 * @param {string} url
+	 */
+	constructor(url, options) {
+		this.queuedURL = [url];
+		this.checked = new Set();
+		this.options = options;
+		this.urlErrors = {};
+		this.urlParents = {};
 	}
 
-	stats.todo--;
-	const url = myURL.toString();
-	// Add this URL to the ones we've seen already, return if it is a
-  // duplicate.
-	if (addChecked(url)) {
-		return;
+	async findBrokenLinks() {
+		do {
+			await nextURL();
+		} while (this.hasTodos());
+
+		return this;
 	}
 
-	stats.link++;
-	
-	// todo filter myURL with scheme ?
-	const res = await axios.get(myURL.toString())
-		.catch(err => err.response ? err.response : {status: 900});
-	// Ok, we got something back from request, let's see what it is
-	if (200 <= res.status && res.status < 400) {
-		// Internal HTML documents need to be given to handleDoc for processing
-		if (/html/.test(res.headers['content-type']) &&
-			myURL.hostname === startURLObj.hostname) {
-			handleDoc(url, res.data);
+	nextURL() {
+		const curURL = this.queuedURL.shift();
+
+		return this.handleURL(curURL);
+	}
+
+	/**
+	 * check if there are still links in queue
+	 */
+	hasTodos() {
+		return this.queuedURL.length > 0;
+	}
+
+	get URLchecked() {
+		return this.checked.size;
+	}
+
+	get problems() {
+		let sum = 0;
+		for (let problemSrc of this.urlParents) {
+			sum += problemSrc.size;
 		}
-	} else {
-		if ([403, 900].indexOf(res.status) === -1) {
-			addError(url, urlParent, res.status);
-		}
-	}
-}
 
-function addChecked(urlstr) {
-	if (checked.has(urlstr)) {
-		return true;
+		return sum;
 	}
 
-	checked.add(urlstr);
-
-	return false;
-}
-
-/**
- * @param {URL} myURL
- */
-function handleDoc(base, htmlstr) {
-	let numOfLinks = 0;
-	let newLinks = 0;
-
-	const $ = cheerio.load(htmlstr);
-	const robotsNode = $('meta[name=robots]');
-	if (/nofollow/.test(robotsNode.html())) {
-		return;
+	get errors() {
+		return Object.keys(this.urlErrors).length;
 	}
 
-	const links = $('a[href]').filter((i, el) => $(el).attr('href').trim() !== '');
-
-	links.each((i, el) => {
-		const link = $(el).attr('href');
-		const urlObj = new URL(link, base);
+	/**
+	 * @param {string} urlstr
+	 */
+	async handleURL(urlstr) {
+		const [urlInput, urlParent] = urlstr.split('|');
+		const urlObj = new URL(urlInput, urlParent);
 		if (urlObj.hash) {
 			urlObj.hash = '';
 		}
-		const newURL = urlObj.toString();
-		if (checked.has(newURL)) {
-			// If an error has already been logged for this URL we add the
-			// current parent to the list of parents on which this URL
-			// appears.
-			// if (urlErrors[newURL]) {
-			// 	urlParents[newURL].push(base);
-			// 	stats.problem++;
-			// }
 
+		const url = urlObj.toString();
+		// Add this URL to the ones we've seen already, return if it is a
+  	// duplicate.
+		if (this.addChecked(url)) {
 			return;
 		}
-		// We have something new to check
-		queuedURL.push(newURL + '|' + base);
-		stats.todo++;
-		newLinks++;
-	});
 
-	console.log(`New Links: ${newLinks}`);
-}
-
-function addError(myURL, urlParent, status) {
-	if (!urlErrors[myURL]) {
-		urlErrors[myURL] = {};
+		const res = await axios.get(url)
+			.catch(err => err.response ? err.response : {status: 900});
+		// Ok, we got something back from request, let's see what it is
+		if (200 <= res.status && res.status < 400) {
+			this.maybeFindMore(urlObj, res);
+		} else {
+			this.maybeAddError(url, urlParent, res.status);
+		}
 	}
-	
-	urlErrors[myURL].status = status;
-	if (!urlParents[myURL]) {
-		urlParents[myURL] = new Set();
+	/**
+	 * @param {string} urlstr
+	 */
+	addChecked(urlstr) {
+		if (this.checked.has(urlstr)) {
+			return true;
+		}
+
+		this.checked.add(urlstr);
+
+		return false;
 	}
-	urlParents[myURL].add(urlParent);
-	status.problem++;
+	/**
+	 * @param {URL} urlObj
+	 */
+	maybeFindMore(urlObj, res) {
+		if (/html/i.test(res.headers['content-type'])
+			&& urlObj.hostname === this.options.hostname) {
+			this.handleDoc(urlObj.toString(), res.data);
+		}
+	}
+	/**
+	 * @param {string} url
+	 * @param {string} urlParent
+	 * @param {number} status
+	 */
+	maybeAddError(url, urlParent, status) {
+		if ([403, 900].indexOf(status) === -1) {
+			this.addError(url, urlParent, status);
+		}
+	}
+	/**
+	 * @param {string} base
+	 * @param {string} htmlstr
+	 */
+	handleDoc(base, htmlstr) {
+		const $ = cheerio.load(htmlstr);
+		const robotsNode = $('meta[name=robots]');
+		// It is not important if bot does not want to see it
+		if (/nofollow/i.test(robotsNode.html())) {
+			return;
+		}
+
+		const links = $('a[href]')
+			.filter((i, el) => $(el).attr('href').trim() !== '');
+		
+		links.each((i, el) => {
+			const link = $(el).attr('href');
+			const urlObj = new URL(link, base);
+			if (urlObj.hash) {
+				urlObj.hash = '';
+			}
+			const newURL = urlObj.toString();
+			if (this.checked.has(newURL)) {
+				if (this.urlErrors[newURL]) {
+					this.urlParents[newURL].add(base);
+				}
+				// It is checked
+				return;
+			}
+
+			this.queuedURL.push(newURL + '|' + base);
+		});
+	}
+	/**
+	 * @param {string} url
+	 * @param {string} urlParent
+	 * @param {number} status
+	 */
+	addError(url, urlParent, status) {
+		const errList = this.urlErrors;
+		const errParents = this.urlParents;
+
+		if (!errList[url]) {
+			errList[url] = {};
+		}
+		errList[url].status = status;
+
+		if (!errParents[url]) {
+			errParents[url] = new Set();
+		}
+		errParents[url].add(urlParent);
+	}
 }
 
-checkLinks().catch(console.log);
+/**
+ * @param {string} url
+ */
+function check(url, options = {}) {
+	const urlObject = new URL(url);
+	options.hostname = urlObject.hostname;
 
-function printResult() {
-	console.log('Finished');
-	console.log(checked.size, 'links have been checked');
-	console.log(Object.keys(urlErrors).length, 'problems found');
+	return new Checker(urlObject.toString(), options);
 }
+
+export {Checker, check};
