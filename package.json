@@ -12,7 +12,9 @@
   },
   "dependencies": {},
   "devDependencies": {
+    "axios": "^0.16.2",
     "bootstrap": "beta",
+    "cheerio": "^1.0.0-rc.2",
     "cross-env": "^5.0.1",
     "electron": "^1.6.11",
     "electron-devtools-installer": "^2.2.0",

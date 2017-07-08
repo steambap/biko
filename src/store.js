@@ -4,11 +4,13 @@ import Vuex from 'vuex';
 Vue.use(Vuex);
 
 const state = {
-	a: 0
+	link: ''
 };
 
 const mutations = {
-
+  updateLink(state, newLink) {
+    state.link = newLink;
+  }
 };
 
 const actions = {

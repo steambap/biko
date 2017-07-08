@@ -1,9 +1,9 @@
 <template>
 	<div class="container h-100">
-		<div class="row align-items-center h-100">
-			<div class="col text-center">
-				<h2 class="mb-2">Enter your URL:</h2>
-				<div class="input-group mb-2">
+		<div class="row align-items-center justify-content-center h-100">
+			<div class="col col-lg-6 text-center">
+				<h2 class="mb-3">Enter your URL:</h2>
+				<div class="input-group mb-3">
 					<span class="input-group-addon">http://</span>
 					<input type="text"
 						class="form-control"
@@ -35,7 +35,8 @@ export default {
 			if (this.hasNoLink) {
 				return;
 			}
-			console.log('todo!');
+			this.$store.commit('updateLink', this.link);
+			this.$router.push('/search');
 		}
 	}
 };
