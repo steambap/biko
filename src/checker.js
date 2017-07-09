@@ -72,8 +72,11 @@ class Checker {
 			return;
 		}
 
-		const res = await axios.get(url)
-			.catch(err => err.response ? err.response : {status: 900});
+		const res = await axios.get(url, {
+			headers: {
+				'user-agent': navigator.userAgent
+			}
+		}).catch(err => err.response ? err.response : {status: 900});
 		// Ok, we got something back from request, let's see what it is
 		if (200 <= res.status && res.status < 400) {
 			this.maybeFindMore(urlObj, res);
@@ -99,7 +102,8 @@ class Checker {
 	maybeFindMore(urlObj, res) {
 		if (/html/i.test(res.headers['content-type'])
 			&& urlObj.hostname === this.options.hostname) {
-			this.handleDoc(urlObj.toString(), res.data);
+			const url = this.tryFindUrl(res) || urlObj.toString();
+			this.handleDoc(url, res.data);
 		}
 	}
 	/**
@@ -130,7 +134,7 @@ class Checker {
 				if (href === '') {
 					return false;
 				}
-				if (/javascript/i.test(href)) {
+				if (/javascript:/i.test(href)) {
 					return false;
 				}
 
@@ -173,6 +177,14 @@ class Checker {
 			errParents[url] = new Set();
 		}
 		errParents[url].add(urlParent);
+	}
+
+	tryFindUrl(res) {
+		try {
+			return res.request.res.responseUrl;
+		} catch (_) {
+			return '';
+		}
 	}
 }
 

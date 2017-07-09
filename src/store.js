@@ -7,7 +7,7 @@ const isDev = process.env.NODE_ENV === 'development';
 Vue.use(Vuex);
 
 const state = {
-	link: isDev ? 'www.lemonce.com' : '',
+	link: isDev ? 'www.seleniumalternatives.com' : '',
 	resultMsg: '',
 	stopFlag: false,
 	urlErrors: 0,
@@ -38,11 +38,18 @@ const mutations = {
 	},
 	updateBrokenLink(state, table) {
 		state.brokenLinkTable = table;
+	},
+	stop(state) {
+		state.stopFlag = true;
+	},
+	start(state) {
+		state.stopFlag = false;
 	}
 };
 
 const actions = {
 	async checkLink({dispatch, commit}) {
+		commit('start');
 		try {
 			await dispatch('runCheck');
 			commit('updateResultMsg', 'Done');
@@ -57,6 +64,7 @@ const actions = {
 			await checker.nextURL();
 			commit('updateCheckerState', checker);
 		} while (checker.hasTodos() && !state.stopFlag);
+		commit('stop');
 		console.log(checker);
 		const brokenLinkTable = [];
 		Object.keys(checker.urlErrors).forEach(url => {

@@ -1,6 +1,7 @@
 <template>
 	<div class="container">
 		<button class="btn btn-secondary my-2" @click="home">Home</button>
+		<button class="btn btn-secondary" @click="stop">Stop</button>
 		<div class="row pb-3">
 			<div class="col">
 				<result-card></result-card>
@@ -25,8 +26,13 @@ import BrokenLinkItem from '../component/broken-link-item';
 export default {
 	name: 'search-result',
 	components: {ResultCard, BrokenLinkItem},
+	beforeRouteEnter(to, from, next) {
+		next(vm => {
+			vm.$store.dispatch('checkLink');
+		});
+	},
 	mounted() {
-		this.$store.dispatch('checkLink');
+		// this.$store.dispatch('checkLink');
 	},
 	computed: {
 		brokenLinkTable() {
@@ -36,6 +42,9 @@ export default {
 	methods: {
 		home() {
 			this.$router.push('/');
+		},
+		stop() {
+			this.$store.commit('stop');
 		}
 	}
 };
