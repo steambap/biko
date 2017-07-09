@@ -1,6 +1,9 @@
-const {URL} = require('url');
-const axios = require('axios');
-const cheerio = require('cheerio');
+import {URL} from 'url';
+import axios from 'axios';
+import axiosAdapter from 'axios/lib/adapters/http';
+import cheerio from 'cheerio';
+
+axios.defaults.adapter = axiosAdapter;
 
 class Checker {
 	/**
@@ -35,14 +38,14 @@ class Checker {
 		return this.queuedURL.length > 0;
 	}
 
-	get URLchecked() {
+	get URLChecked() {
 		return this.checked.size;
 	}
 
 	get problems() {
 		let sum = 0;
-		for (let problemSrc of this.urlParents) {
-			sum += problemSrc.size;
+		for (let urlstr in this.urlParents) {
+			sum += this.urlParents[urlstr].size;
 		}
 
 		return sum;
@@ -105,7 +108,7 @@ class Checker {
 	 * @param {number} status
 	 */
 	maybeAddError(url, urlParent, status) {
-		if ([403, 900].indexOf(status) === -1) {
+		if ([403, 900, 521, 429].indexOf(status) === -1) {
 			this.addError(url, urlParent, status);
 		}
 	}
@@ -122,8 +125,18 @@ class Checker {
 		}
 
 		const links = $('a[href]')
-			.filter((i, el) => $(el).attr('href').trim() !== '');
-		
+			.filter(function (i, el) {
+				const href = $(el).attr('href').trim();
+				if (href === '') {
+					return false;
+				}
+				if (/javascript/i.test(href)) {
+					return false;
+				}
+
+				return true;
+			});
+
 		links.each((i, el) => {
 			const link = $(el).attr('href');
 			const urlObj = new URL(link, base);

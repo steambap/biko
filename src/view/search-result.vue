@@ -1,9 +1,18 @@
 <template>
 	<div class="container">
 		<button class="btn btn-secondary my-2" @click="home">Home</button>
-		<div class="row">
+		<div class="row pb-3">
 			<div class="col">
 				<result-card></result-card>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col">
+				<broken-link-item
+					v-for="(brokenLink, index) in brokenLinkTable"
+					:key="index"
+					:brokenLink="brokenLink">
+				</broken-link-item>
 			</div>
 		</div>
 	</div>
@@ -11,18 +20,18 @@
 
 <script>
 import ResultCard from '../component/result-card';
+import BrokenLinkItem from '../component/broken-link-item';
 
 export default {
 	name: 'search-result',
-	components: {ResultCard},
-	beforeRouteEnter(to, from, next) {
-		next(vm => {
-			if (vm.$store.state.link === '') {
-				vm.$router.push('/');
-			} else {
-				this.$store.dispatch('checkLink');
-			}
-		});
+	components: {ResultCard, BrokenLinkItem},
+	mounted() {
+		this.$store.dispatch('checkLink');
+	},
+	computed: {
+		brokenLinkTable() {
+			return this.$store.state.brokenLinkTable;
+		}
 	},
 	methods: {
 		home() {

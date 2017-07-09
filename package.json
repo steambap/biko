@@ -1,14 +1,17 @@
 {
   "name": "biko",
+  "version": "0.1.0",
   "private": true,
   "scripts": {
     "start": "cross-env NODE_ENV=development electron app/",
-    "dev": "poi"
+    "dev": "poi",
+    "build": "poi build"
   },
   "main": "index.js",
   "author": {
     "name": "Weilin Shi",
-    "email": "934587911@qq.com"
+    "email": "934587911@qq.com",
+    "url": "weilinshi.org"
   },
   "dependencies": {},
   "devDependencies": {

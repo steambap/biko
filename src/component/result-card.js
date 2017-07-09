@@ -11,6 +11,9 @@ export default {
 		},
 		pages() {
 			return this.$store.state.urlChecked;
+		},
+		result() {
+			return this.$store.state.resultMsg;
 		}
 	},
 	render() {
@@ -20,7 +23,7 @@ export default {
 					{this.link}
 				</div>
 				<div class="card-block text-center">
-					<h2 class="d-inline-block">
+					<h2 class={{"d-inline-block": true, "text-danger": this.errors > 0}}>
 						{this.errors}
 					</h2>
 					&nbsp;
@@ -39,7 +42,7 @@ export default {
 					</div>
 				</div>
 				<div class="card-footer">
-					<small class="text-muted">Done in 3 minutes</small>
+					<small class="text-muted">{this.result}</small>
 				</div>
 			</div>
 		);

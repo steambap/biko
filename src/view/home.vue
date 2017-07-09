@@ -12,7 +12,7 @@
 				</div>
 				<div class="btn-toolbar justify-content-center">
 					<button class="btn btn-secondary home-btn mr-3" @click="find" :disabled="hasNoLink">Find Broken Link</button>
-					<button class="btn btn-secondary home-btn">Advanced</button>
+					<button class="btn btn-secondary home-btn" disabled>Advanced</button>
 				</div>
 			</div>
 		</div>
