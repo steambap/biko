@@ -12,7 +12,7 @@ export default {
 	render() {
 		return (
 			<div class="broken-link-item alert alert-info d-flex pb-2">
-				<div class="link-item" style="flex: 1 0 auto">
+				<div class="link-item border-right mr-3" style="flex: 1 0 auto">
 					<div>{this.brokenLink.target}</div>
 					<div class="text-muted">Source: {this.source}</div>
 				</div>

@@ -44,6 +44,11 @@ const mutations = {
 	},
 	start(state) {
 		state.stopFlag = false;
+		state.resultMsg = 'Running...';
+		state.urlErrors = 0;
+		state.urlProblems = 0;
+		state.urlChecked = 0;
+		state.brokenLinkTable = [];
 	}
 };
 

@@ -41,6 +41,7 @@ export default {
 	},
 	methods: {
 		home() {
+			this.stop();
 			this.$router.push('/');
 		},
 		stop() {

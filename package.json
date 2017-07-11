@@ -1,11 +1,16 @@
 {
   "name": "biko",
   "version": "0.1.0",
+  "productName": "Biko",
   "private": true,
   "scripts": {
     "start": "cross-env NODE_ENV=development electron app/",
     "dev": "poi",
-    "build": "poi build"
+    "build": "cross-env NODE_ENV=production poi build",
+    "pack:windows": "node packager/win32.js && cd output && powershell compress-archive biko-win32-ia32 biko_win_%npm_package_version%.zip -Force",
+    "build:windows": "yarn run build && yarn run pack:windows",
+    "pack:macos": "electron-packager . --icon=icons/Biko.icns --overwrite --out=output --asar --prune --platform=darwin --arch=x64 --app-bundle-id=org.weilinshi.biko --app-version=$npm_package_version && cd 'output/biko-darwin-x64' && zip -ryXq9 ../biko_osx_${npm_package_version}.zip 'biko.app'",
+    "build:macos": "yarn run build && yarn run pack:macos"
   },
   "main": "index.js",
   "author": {
@@ -21,6 +26,7 @@
     "cross-env": "^5.0.1",
     "electron": "^1.6.11",
     "electron-devtools-installer": "^2.2.0",
+    "electron-packager": "^8.7.2",
     "poi": "^9.1.0",
     "vue-router": "^2.7.0",
     "vuex": "^2.3.1",
