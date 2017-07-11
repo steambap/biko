@@ -8,6 +8,8 @@ import './style.css';
 
 sync(store, router);
 
+Vue.config.errorHandler = console.error;
+
 const app = new Vue({
   router,
   store,

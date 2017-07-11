@@ -9,7 +9,7 @@
     "build": "cross-env NODE_ENV=production poi build",
     "pack:windows": "node packager/win32.js && cd output && powershell compress-archive biko-win32-ia32 biko_win_%npm_package_version%.zip -Force",
     "build:windows": "yarn run build && yarn run pack:windows",
-    "pack:macos": "electron-packager . --icon=icons/Biko.icns --overwrite --out=output --asar --prune --platform=darwin --arch=x64 --app-bundle-id=org.weilinshi.biko --app-version=$npm_package_version && cd 'output/biko-darwin-x64' && zip -ryXq9 ../biko_osx_${npm_package_version}.zip 'biko.app'",
+    "pack:macos": "electron-packager . --icon=static/biko.icns --overwrite --out=output --asar --prune --platform=darwin --arch=x64 --app-bundle-id=org.weilinshi.biko --app-version=$npm_package_version && cd 'output/biko-darwin-x64' && zip -ryXq9 ../biko_osx_${npm_package_version}.zip 'biko.app'",
     "build:macos": "yarn run build && yarn run pack:macos"
   },
   "main": "index.js",

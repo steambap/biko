@@ -30,9 +30,8 @@ function createWindow() {
   mainWindow.loadURL(url);
 
   // Open the DevTools.
-    mainWindow.webContents.openDevTools();
   if (isDev) {
-
+    mainWindow.webContents.openDevTools();
     const installExtension = require('electron-devtools-installer')
     installExtension.default(installExtension.VUEJS_DEVTOOLS)
       .then(name => console.log(`Added Extension:  ${name}`))

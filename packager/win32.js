@@ -5,7 +5,7 @@ const config = require('../package.json');
 const sharedConf = require('./shared-config.js');
 
 const packageOpts = Object.assign({
-	// icon: resolve(__dirname, '../icons/Biko.ico'),
+	icon: resolve(__dirname, '../static/biko.ico'),
 	platform: 'win32',
 	arch: 'ia32',
 	win32metadata: {
