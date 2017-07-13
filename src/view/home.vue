@@ -2,7 +2,7 @@
 	<div class="container h-100">
 		<div class="row align-items-center justify-content-center h-100">
 			<div class="col col-lg-6 text-center">
-				<h2 class="mb-3">Enter your URL:</h2>
+				<h2 class="mb-3">{{ $t("home.title") }}</h2>
 				<div class="input-group mb-3">
 					<span class="input-group-addon">http://</span>
 					<input type="text"
