@@ -1,6 +1,10 @@
 {
   "home": {
     "title": "请输入一个链接:",
-    "search": "检查断链"
+    "search": "检查断链",
+    "options": "检查选项"
+  },
+  "footer": {
+    "setting": "设置"
   }
 }

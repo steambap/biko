@@ -30,3 +30,8 @@ body {
 .border-right {
 	border-right: 1px solid #ccc;
 }
+
+footer {
+	position: fixed;
+	bottom: 0;
+}

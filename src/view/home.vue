@@ -11,19 +11,28 @@
 						@keyup.enter="find">
 				</div>
 				<div class="btn-toolbar justify-content-center">
-					<button class="btn btn-secondary home-btn mr-3" @click="find" :disabled="hasNoLink">Find Broken Link</button>
-					<button class="btn btn-secondary home-btn" disabled>Advanced</button>
+					<button class="btn btn-secondary home-btn mr-3" @click="find" :disabled="hasNoLink">
+						{{ $t("home.search") }}</button>
+					<button class="btn btn-secondary home-btn" disabled>
+						{{ $t("home.options") }}</button>
 				</div>
 			</div>
 		</div>
+
+		<footer-view></footer-view>
 	</div>
 </template>
 
 <script>
+import FooterView from '../component/footer';
+
 export default {
 	name: 'home',
+	components: {FooterView},
 	data() {
-		return {link: 'www.'};
+		const link = this.$store.state.link ?
+			this.$store.state.link : 'www.';
+		return { link };
 	},
 	computed: {
 		hasNoLink() {

@@ -1,6 +1,10 @@
 {
   "home": {
     "title": "Enter Your URL:",
-    "search": "Find Broken Link"
+    "search": "Find Broken Link",
+    "options": "Options"
+  },
+  "footer": {
+    "setting": "Setting"
   }
 }
