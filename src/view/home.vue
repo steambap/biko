@@ -13,13 +13,11 @@
 				<div class="btn-toolbar justify-content-center">
 					<button class="btn btn-secondary home-btn mr-3" @click="find" :disabled="hasNoLink">
 						{{ $t("home.search") }}</button>
-					<button class="btn btn-secondary home-btn" disabled>
+					<button class="btn btn-secondary home-btn" @click="setting">
 						{{ $t("home.options") }}</button>
 				</div>
 			</div>
 		</div>
-
-		<footer-view></footer-view>
 	</div>
 </template>
 
@@ -46,6 +44,9 @@ export default {
 			}
 			this.$store.commit('updateLink', this.link);
 			this.$router.push('/search');
+		},
+		setting() {
+			this.$router.push('/setting');
 		}
 	}
 };

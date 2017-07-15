@@ -3,6 +3,7 @@ import Router from 'vue-router';
 import Home from './view/home.vue';
 import SearchResult from './view/search-result.vue';
 import Setting from './view/setting.vue';
+import SettingHome from './component/setting-main.vue';
 
 Vue.use(Router);
 
@@ -17,7 +18,13 @@ const routes = [
 	},
 	{
 		path: '/setting',
-		component: Setting
+		component: Setting,
+		children: [
+			{
+				path: '',
+				component: SettingHome
+			}
+		]
 	}
 ];
 

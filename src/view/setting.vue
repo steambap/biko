@@ -2,7 +2,7 @@
 	<div class="container">
 		<div class="row">
 			<div class="col">
-				setting here
+				<router-view></router-view>
 			</div>
 		</div>
 	</div>
