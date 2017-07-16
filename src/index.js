@@ -6,6 +6,7 @@ import store from './store';
 import i18n from './i18n';
 import 'bootstrap/dist/css/bootstrap.css';
 import './style.css';
+import 'prismjs/themes/prism.css';
 
 sync(store, router);
 

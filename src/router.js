@@ -3,7 +3,8 @@ import Router from 'vue-router';
 import Home from './view/home.vue';
 import SearchResult from './view/search-result.vue';
 import Setting from './view/setting.vue';
-import SettingHome from './component/setting-main.vue';
+import SettingHome from './component/setting-main';
+import CodeView from './view/code.vue';
 
 Vue.use(Router);
 
@@ -25,6 +26,10 @@ const routes = [
 				component: SettingHome
 			}
 		]
+	},
+	{
+		path: '/code',
+		component: CodeView
 	}
 ];
 

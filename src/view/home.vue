@@ -22,11 +22,8 @@
 </template>
 
 <script>
-import FooterView from '../component/footer';
-
 export default {
 	name: 'home',
-	components: {FooterView},
 	data() {
 		const link = this.$store.state.link ?
 			this.$store.state.link : 'www.';
@@ -46,7 +43,7 @@ export default {
 			this.$router.push('/search');
 		},
 		setting() {
-			this.$router.push('/setting');
+			this.$router.push('/code');
 		}
 	}
 };
