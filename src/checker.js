@@ -1,7 +1,7 @@
 import {URL} from 'url';
 import axios from 'axios';
 import axiosAdapter from 'axios/lib/adapters/http';
-import cheerio from 'cheerio';
+const {JSDOM} = global.require('jsdom');
 
 axios.defaults.adapter = axiosAdapter;
 
@@ -121,29 +121,31 @@ class Checker {
 	 * @param {string} htmlstr
 	 */
 	handleDoc(base, htmlstr) {
-		const $ = cheerio.load(htmlstr);
-		const robotsNode = $('meta[name=robots]');
+		const dom = new JSDOM(htmlstr, {includeNodeLocations: true});
+		const select = sel => dom.window.document.querySelector(sel);
+		const selectAll = sel => dom.window.document.querySelectorAll(sel);
+		const robotsNode = select('meta[name=robots]');
 		// It is not important if bot does not want to see it
-		if (/nofollow/i.test(robotsNode.html())) {
+		if (robotsNode && /nofollow/i.test(robotsNode.textContent)) {
 			return;
 		}
+		/** @type {string[]} */
+		const links = [];
+		selectAll('a[href]').forEach(el => {
+			/** @type {string} */
+			const href = el.href.trim();
+			if (href === '') {
+				return;
+			}
+			if (/javascript:/i.test(href)) {
+				return;
+			}
 
-		const links = $('a[href]')
-			.filter(function (i, el) {
-				const href = $(el).attr('href').trim();
-				if (href === '') {
-					return false;
-				}
-				if (/javascript:/i.test(href)) {
-					return false;
-				}
+			links.push(href);
+		});
 
-				return true;
-			});
-
-		links.each((i, el) => {
-			const link = $(el).attr('href');
-			const urlObj = new URL(link, base);
+		links.forEach(href => {
+			const urlObj = new URL(href, base);
 			if (urlObj.hash) {
 				urlObj.hash = '';
 			}
